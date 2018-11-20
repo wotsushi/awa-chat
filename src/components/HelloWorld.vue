@@ -1,43 +1,74 @@
 <template>
   <div class="hello">
     <h1>{{ msg }}</h1>
-    <p>
-      For a guide and recipes on how to configure / customize this project,<br>
-      check out the
-      <a href="https://cli.vuejs.org" target="_blank" rel="noopener">vue-cli documentation</a>.
-    </p>
-    <h3>Installed CLI Plugins</h3>
-    <ul>
-      <li><a href="https://github.com/vuejs/vue-cli/tree/dev/packages/%40vue/cli-plugin-babel" target="_blank" rel="noopener">babel</a></li>
-      <li><a href="https://github.com/vuejs/vue-cli/tree/dev/packages/%40vue/cli-plugin-typescript" target="_blank" rel="noopener">typescript</a></li>
-      <li><a href="https://github.com/vuejs/vue-cli/tree/dev/packages/%40vue/cli-plugin-pwa" target="_blank" rel="noopener">pwa</a></li>
-    </ul>
-    <h3>Essential Links</h3>
-    <ul>
-      <li><a href="https://vuejs.org" target="_blank" rel="noopener">Core Docs</a></li>
-      <li><a href="https://forum.vuejs.org" target="_blank" rel="noopener">Forum</a></li>
-      <li><a href="https://chat.vuejs.org" target="_blank" rel="noopener">Community Chat</a></li>
-      <li><a href="https://twitter.com/vuejs" target="_blank" rel="noopener">Twitter</a></li>
-      <li><a href="https://news.vuejs.org" target="_blank" rel="noopener">News</a></li>
-    </ul>
-    <h3>Ecosystem</h3>
-    <ul>
-      <li><a href="https://router.vuejs.org" target="_blank" rel="noopener">vue-router</a></li>
-      <li><a href="https://vuex.vuejs.org" target="_blank" rel="noopener">vuex</a></li>
-      <li><a href="https://github.com/vuejs/vue-devtools#vue-devtools" target="_blank" rel="noopener">vue-devtools</a></li>
-      <li><a href="https://vue-loader.vuejs.org" target="_blank" rel="noopener">vue-loader</a></li>
-      <li><a href="https://github.com/vuejs/awesome-vue" target="_blank" rel="noopener">awesome-vue</a></li>
-    </ul>
+    <div v-if="user"> {{ user.displayName }} </div>
+    <button @click="signin">Sign In</button>
+    <div id="input">
+      <input v-model="inputMessage" @keyup.enter="send">
+    </div>
+    <div id="outputs">
+        <div v-for="message in messages" :key="message.name">
+          {{ message.username }}: {{message.content}}
+        </div>
+    </div>
   </div>
 </template>
 
 <script lang="ts">
 import { Component, Prop, Vue } from 'vue-property-decorator';
+import firebase from 'firebase/app';
+import 'firebase/auth';
+import 'firebase/firestore';
+
+firebase.initializeApp({
+  apiKey: 'AIzaSyCnowN98wh2QAAiJMeeUHJHAE3JPXGSuNY',
+  authDomain: 'awa-chat.firebaseapp.com',
+  databaseURL: 'https://awa-chat.firebaseio.com',
+  projectId: 'awa-chat',
+  storageBucket: 'awa-chat.appspot.com',
+  messagingSenderId: '426819575153',
+});
+
+const firestore = firebase.firestore();
+firestore.settings({ timestampsInSnapshots: true });
 
 @Component
 export default class HelloWorld extends Vue {
   @Prop() private msg!: string;
+  private user: firebase.User = null!;
+  private messages: object[] = [];
+  private inputMessage: string = '';
+
+  private created() {
+    firestore.collection('messages').orderBy('timestamp', 'desc').onSnapshot((querySnapShot) => {
+      this.messages = [];
+      querySnapShot.forEach((message) => {
+        this.messages.push(message.data());
+      });
+    });
+  }
+
+  private async signin() {
+    const result = await firebase.auth().signInWithPopup(
+      new firebase.auth.GoogleAuthProvider(),
+    );
+    if (result.credential) {
+        this.user = result.user!;
+    }
+  }
+
+  private send() {
+    if (this.inputMessage) {
+      firestore.collection('messages').add({
+        username: this.user.displayName,
+        content: this.inputMessage,
+        timestamp: firebase.firestore.FieldValue.serverTimestamp(),
+      });
+      this.inputMessage = '';
+    }
+  }
 }
+
 </script>
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->

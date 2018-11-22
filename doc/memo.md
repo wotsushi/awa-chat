@@ -85,6 +85,7 @@ $ yarn --version
 
 ### Vue CLI 3
 ビルトイン機能が強い。Vue.jsで開発するならかなりオススメ。
+
 [Vue CLI 3 Installation](https://cli.vuejs.org/guide/installation.html)
 
 ```bash
@@ -202,7 +203,7 @@ Time: 3369ms
 ```
 
 ブラウザで http://localhost:8080/ を開くと、以下が表示される。
-![init.png](/knowledge/open.file/download?fileNo=16)
+![init.png](init.png)
 
 これで、フロントエンドの開発準備は整いました！
 
@@ -212,7 +213,7 @@ Time: 3369ms
 ブラウザで https://console.firebase.google.com/ を開く。
 「プロジェクトを追加」をクリックし、ええ感じにプロジェクトを作成する。
 
-![image-20181112133925395.png](/knowledge/open.file/download?fileNo=17)
+![create_project.png](create_project.png)
 
 ### firebase-toolsのインストール
 Firebaseを操作できるCLIです。yarnでインストールできる
@@ -262,8 +263,11 @@ $ firebase list
 
 ### プロジェクトディレクトリ
 作成したFirebaseのプロジェクトと開発したアプリケーションのディレクトリを紐付ける必要がある。
+
 Firebaseのプロジェクトに紐付けられたアプリケーションのディレクトリを **プロジェクトディレクトリ** と呼ぶ。
+
 アプリケーションのディレクトリ（今回だと `awa-chat`）をFirebaseのプロジェクトディレクトリにするには、カレントディレクトリをアプリケーションのディレクトリとして、 `firebase init` コマンドを実行すればよい。
+
 * feature: 今回はホスティングとデータベースを使うので、FirestoreとHostingを選択した
   * 同じデータベースでも Realtime DatabaseよりはFirestoreを選んだほうがいいらしい
 * Hosing Setup: public directoryはデフォルト値の `public` ではなく `dist` を指定した。ビルド先がdistなので。
@@ -429,7 +433,7 @@ Hosting URL: https://awa-chat.firebaseapp.com
 
 早速、ブラウザでデプロイされたページを開いてみる。
 
-![image-20181112141551582.png](/knowledge/open.file/download?fileNo=18)
+![first_deploy.png](first_deploy.png)
 
 無事にデプロイできていますね。
 
@@ -438,11 +442,11 @@ Hosting URL: https://awa-chat.firebaseapp.com
 ### Firebaseの設定
 まず、Firebaseのコンソールを開き、Authの設定ページを開く。
 
-![image-20181113112507505.png](/knowledge/open.file/download?fileNo=19)
+![auth.png](auth.png)
 
 ログイン方法を選んでね！　って言われるのでお好みのログイン方法を選ぶ（複数可）。
 
-![image-20181113112849573.png](/knowledge/open.file/download?fileNo=20)
+![select_auth.png](select_auth.png)
 
 今回は、Googleだけ。
 これで、Firebaseの認証に関する設定はおしまい。
@@ -513,9 +517,10 @@ info All dependencies
 
 次に、FirebaseのコンソールでAPIキーを確認する。
 
-![image-20181113120947060.png](/knowledge/open.file/download?fileNo=21)
+![api_key.png](api_key.png)
 
 確認したAPIキーを用いることで、JavasScriptでFirebaseのAPIを叩くことができる。
+
 ちなみに、この情報は第三者にバレる前提の情報なので、JavaScript/TypeScriptのスクリプトファイルにコピペして問題なし（小細工は不要）。
 
 ### フロントエンドの開発
@@ -533,9 +538,13 @@ HTML
 ```
 
 `user` はログインしているユーザ情報である。ただし、ログインしていない場合は `null` である。
+
 つまり、ログインしている場合、そのユーザ名を表示する。
+
 また、Sign Inボタンも作成した。このボタンをクリックすると次に述べるTypeScriptのメソッドをコールする。
+
 ギミックは以上。
+
 いろいろ手抜きだが気にしないことにする。
 
 TypeScript
@@ -571,25 +580,35 @@ export default class HelloWorld extends Vue {
 ```
 
 `import firebase from 'firebase/app';` でFirebaseのAPIに関するパッケージをインポートする。
+
 `import 'firebase/auth';` でFirebaseの認証機能に関するパッケージをインポートする。
+
 `firebase.initializeApp` でFirebaseにアクセスする準備が整う。
+
 準備はここまで。
 
 メインディッシュは `Sign In` ボタンをクリックするとコールされる `signin` メソッドである。
+
 `signInWithPopup` の引数に認証方式を指定し、認証を実施する。
+
 ちなみにリダイレクトさせて認証する方式もある。
+
 認証に成功すると、認証したユーザの情報にアクセスできる。
+
 [firebase.User](https://firebase.google.com/docs/reference/js/firebase.User?hl=ja)
 
 ### 認証を試してみる
 Sign In ボタンができているので、それをクリックする。
+
 Googleアカウントの認証画面が出てくる。
-![image-20181113134632032.png](/knowledge/open.file/download?fileNo=22)
+
+![signin.png](signin.png)
 アカウント情報を入力し認証する。
-![image-20181113134826270.png](/knowledge/open.file/download?fileNo=23)
+
+![after_signin.png](after_signin.png)
 認証できた！
 
-##データベースと連携する
+## データベースと連携する
 
 正式版のRealtime Databaseというオプションもありますが、今回はベータ版のFirestoreを使います。
 ベータ版ですが、宗教上の理由がなければFirestore一択らしいです。
@@ -598,16 +617,17 @@ Googleアカウントの認証画面が出てくる。
 
 まず、Firebaseのコンソールを開き、Databaseの設定ページを開く。
 
-![image-20181118102640525.png](/knowledge/open.file/download?fileNo=24)
+![db.png](db.png)
 
 「データベースの作成」をクリックすると、セキュリティルールをどうするか聞かれる。
 
-![image-20181118102907113.png](/knowledge/open.file/download?fileNo=25)
+![db_security](db_security.png)
 
 とりあえず、遊びなのでテストモードで開始する。
+
 真面目にやるなら、きちんとセキュリティルールを設計する必要あります。
 
-![image-20181118103809336.png](/knowledge/open.file/download?fileNo=26)
+![db_init](db_init.png)
 
 データベースができたぞ！（空だけど）
 
@@ -626,19 +646,20 @@ https://firebase.google.com/docs/firestore/data-model?hl=ja
 
 という訳で、最初にコレクションを作成してみる。これは、メッセージの集合に対応することになる。
 
-![image-20181119130229268.png](/knowledge/open.file/download?fileNo=32)
+![collection.png](collection.png)
 
 次に、コレクションに入れるドキュメントを作成する。これは、一つのメッセージに対応する。つまり、記念すべき最初のメッセージとなる。
 
-![image-20181119133939451.png](/knowledge/open.file/download?fileNo=35)
+![document.png](document.png)
 
 それっぽいのができた！
 
-![image-20181119134009588.png](/knowledge/open.file/download?fileNo=36)
+![created_db.png](created_db.png)
 
 ### Firebaseパッケージの入手
 
 認証機能の追加でやったので、何もやらなくてよい。
+
 認証機能を入れないけど、データベース使うならこのタイミングでパッケージを入手してください。
 
 ### フロントエンドの開発
@@ -664,8 +685,10 @@ HTML
 ```
 
 `v-model="inputMessage"` の入力フォームは発言したいメッセージを入力する欄である。
+
 Enterキーを押すと、後述の `send` メソッドがコールされて、データベースにメッセージが送信される。
-`id="outputs" のdiv要素は発言されたメッセージの一覧である。
+
+`id="outputs"` のdiv要素は発言されたメッセージの一覧である。
 
 TypeScript
 
@@ -726,12 +749,19 @@ export default class HelloWorld extends Vue {
 ```
 
 `import 'firebase/firestore';` でFirestoreに関するパッケージをインポートする。
-`firestore.settings({ timestampsInSnapshots: true });` は `Date` の代わりに `Timestamp` 型を使うためのおまじない。ドキュメントが時刻データを持つならとりあえずやっとけー的な（やらないとWarningが出ます）。
+
+`firestore.settings({ timestampsInSnapshots: true });` は `Date` の代わりに `Timestamp` 型を使うためのおまじない。ド
+
+キュメントが時刻データを持つならとりあえずやっとけー的な（やらないとWarningが出ます）。
+
 詳しくは[これ](https://firebase.google.com/docs/reference/js/firebase.firestore.Settings?hl=ja)みて。
+
 準備は以上。
 
 メインのコードは二つある。
+
 一つは、リアルタイムにチャットのメッセージを取得するようにするためのコードである。
+
 もう一つは、 `inputMessage` に入力したメッセージをデータベースに送信するためのコードである。
 
 前者について。コードは以下である。
@@ -747,18 +777,27 @@ export default class HelloWorld extends Vue {
   }
 ```
 
-`created` はVueインスタンスが生成されたあとに実行されるコード。Vueではサーバからデータ取得する処理は `created` に書いたほうがいいかもって誰かが言ってた。
-`firestore.collection('messages')` はコレクション`messages` に対する参照である。これは[CollectionReference](https://firebase.google.com/docs/reference/js/firebase.firestore.CollectionReference?hl=ja) 型の値である。
+`created` はVueインスタンスが生成されたあとに実行されるコード。
+
+Vueではサーバからデータ取得する処理は `created` に書いたほうがいいかもって誰かが言ってた。
+
+`firestore.collection('messages')` はコレクション`messages` に対する参照である。
+
+これは[CollectionReference](https://firebase.google.com/docs/reference/js/firebase.firestore.CollectionReference?hl=ja) 型の値である。
+
 この式だけ評価しても、データ取得のリクエストは送信されない。
+
 `orderBy` メソッドはデータ取得のリクエストに対して、ソートのオプションを付与するイメージ。
+
 `onSnapshot` メソッドはサーバの `messages` ドキュメントが更新されるたびに、引数のリスナをコールさせるようにする（正確には `messages` コレクションを `timestamp` で降順にソートした結果が変化するたびに、引数のリスナがコールされる）。
+
 リスナは `querySnapShot` という引数をとる。これは、クエリの結果を表すオブジェクトと思えばよい。
-リスナの処理では、`querySnapShot` に入っているすべてのメッセージをメッセージのリストを表すインスタンス変数 `messages` にセットしている
-（本当は `forEach` ではなく追加されたデータのみ得る `docChanges` を使うべきだと思う）。
+
+リスナの処理では、`querySnapShot` に入っているすべてのメッセージをメッセージのリストを表すインスタンス変数 `messages` にセットしている（本当は `forEach` ではなく追加されたデータのみ得る `docChanges` を使うべきだと思う）。
 
 後者について。コードは以下である。
 
-```
+```typescript
 private send() {
     if (this.inputMessage) {
       firestore.collection('messages').add({
@@ -772,16 +811,17 @@ private send() {
 ```
 
 見ての通り、直観的なコードである。
+
 ただし、 `add` メソッドは非同期な処理であることに注意（今回はaddした結果に興味を持っていないので気にしなくてよい）。
 
 ### チャットしてみる
 ヌルヌル動いて心地よい。
 
-![image-20181120130458032.png](/knowledge/open.file/download?fileNo=37)
+![awa-chat.png](awa-chat.png)
 
 管理コンソールみると、データベースが更新されていることがわかる。
 
-![image-20181120130623134.png](/knowledge/open.file/download?fileNo=38)
+![update_db.png](update_db.png)
 
 という訳でチャットアプリが完成しました！
 
@@ -840,6 +880,7 @@ For more info visit https://webpack.js.org/guides/code-splitting/
 ```
 
 ちょいちょいwarningsがうるさいが、勘弁。
+
 そして、デプロイ！
 
 ```bash
@@ -875,7 +916,9 @@ Hosting URL: https://awa-chat.firebaseapp.com
 ```
 
 無事デプロイも完了しました（この後 `firebase-tools` をアップデートした）。
+
 よかったら遊んでみてくれい。
+
 https://awa-chat.firebaseapp.com
 
 # まとめ
